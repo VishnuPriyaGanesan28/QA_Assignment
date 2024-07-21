@@ -3,7 +3,7 @@
 <suite name="All Test Suite">
     <test verbose="2" preserve-order="true" name="AssignmentTest">
 <classes>
-    <class name="CreateUserTest"/>
+    <class name="com.test.CreateUserTest"/>
 </classes>
     </test>
 </suite>
