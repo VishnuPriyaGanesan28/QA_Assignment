@@ -138,7 +138,7 @@ public class CreateUserTest
                 .then().extract().response();
         Assert.assertTrue(response.statusCode()==400);
         Assert.assertTrue(response.path("errorType").equals("BadRequest"));
-        Assert.assertTrue(response.path("errorMessage").equals("Validation error - first name must be between 2 and 255 characters"));
+        Assert.assertTrue(response.path("errorMessage").toString().equals("Validation error - first name must be between 2 and 255 characters"));
     }
 
     /**
