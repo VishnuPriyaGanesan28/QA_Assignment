@@ -19,6 +19,10 @@ public class CreateUserTest
 
     Util util = new Util();
 
+    /**
+     * Test to verify the create user api Happy path
+     */
+
     @Test(description = "To Create a new user", priority=1)
     public void createUser(){
         String ratingResponse="";
@@ -47,7 +51,9 @@ public class CreateUserTest
         ratingResponse= util.validateRating(Integer.parseInt(userObj.get("rating").toString()));
         Assert.assertTrue(response.path("data.status").equals(ratingResponse));
     }
-
+    /**
+     * Test to verify the get user api Happy path
+     */
     @Test(description = "To get a user", priority=1)
     public void getUser(){
         JSONObject userObj = new JSONObject();
@@ -81,6 +87,9 @@ public class CreateUserTest
         Assert.assertTrue(getResponse.path("data.status").toString().equals(util.validateRating(Integer.parseInt(getResponse.path("data.rating").toString()))));
     }
 
+    /**
+     * Test to verify the create user api without mandatory field lastName
+     */
     @Test(description = "Unhappy path Create user", priority=1)
     public void createUserUnHappyPath_NoLastName(){
         JSONObject userObj = new JSONObject();
@@ -103,6 +112,10 @@ public class CreateUserTest
          Assert.assertTrue(response.path("errorType").equals("BadRequest"));
         Assert.assertTrue(response.path("errorMessage").equals("Validation error - last name must be between 2 and 255 characters"));
     }
+
+    /**
+     * Test to verify the create user api without mandatory field FirstName
+     */
 
     @Test(description = "Unhappy path Create user", priority=1)
     public void createUserUnHappyPath_NoFirstName(){
@@ -128,6 +141,10 @@ public class CreateUserTest
         Assert.assertTrue(response.path("errorMessage").equals("Validation error - first name must be between 2 and 255 characters"));
     }
 
+    /**
+     * Test to verify the request create user api without api key
+     */
+
     @Test(description = "Unhappy path Create user UnAuthorized", priority=1)
     public void creatUserUnAuthorized(){
         JSONObject userObj = new JSONObject();
@@ -150,6 +167,9 @@ public class CreateUserTest
         Assert.assertTrue(response.path("message").equals("Unauthorized"));
     }
 
+    /**
+     * Test to verify the request get user api without api key
+     */
     @Test(description = "Unhappy path get user UnAuthorized", priority=1)
     public void getUserUnAuthorized(){
         JSONObject userObj = new JSONObject();
@@ -175,8 +195,36 @@ public class CreateUserTest
                         .when().get(baseUrl+"/v1/users/"+userId)
                         .then().extract().response();
         System.out.println(response.statusCode());
-        Assert.assertTrue(response.statusCode()==401);
-        Assert.assertTrue(response.path("message").equals("Unauthorized"));
+        Assert.assertTrue(getResponse.statusCode()==401);
+        Assert.assertTrue(getResponse.path("message").equals("Unauthorized"));
+    }
+
+    /**
+     * Test to verify the request with only Mandatory fields
+     */
+
+    @Test(description = "To Create a new user", priority=1)
+    public void createUser_OnlyMandatoryFields(){
+        String ratingResponse="";
+
+        JSONObject userObj = new JSONObject();
+
+        userObj.put("firstName" , util.createRandomChar(10));
+        userObj.put("lastName" , util.createRandomChar(10));
+        userObj.put("dateOfBirth" , "1987-06-04");
+        userObj.put("email" , util.createRandomChar(7)+"@gmail.com");
+        userObj.put("password" , "super secret password");
+        userObj.put("rating" , 10);
+        Response response =  given().
+                contentType(ContentType.JSON)
+                .header("Authorization", apiKey)
+                .body(userObj.toString())
+
+                .when().post(baseUrl+"/v1/users")
+                .then().extract().response();
+        System.out.println(response.statusCode());
+        Assert.assertTrue(response.statusCode()==200);
+        Assert.assertTrue(response.path("status").equals("Success"));
     }
 
 
